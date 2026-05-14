@@ -18,6 +18,7 @@ import {
 } from '../adapter.ts';
 import { parseJsonSseStream, postJson, postSse } from '../internal/http.ts';
 import { makeOpenAIStrictCompatible, stripNulls } from '../internal/openai-strict.ts';
+import { readProviderMeta } from '../internal/provider-metadata.ts';
 import type {
 	AdapterChunk,
 	AssistantContent,
@@ -389,17 +390,8 @@ const buildRequest = (args: StreamOpenAIArgs): ResponseCreateParamsStreaming => 
 
 const toOpenAIInput = (messages: ModelMessage[]): ResponseInput => messages.flatMap(toOpenAIInputItems);
 
-const readOpenAIMeta = (meta: ProviderMetadata | undefined): OpenAIProviderMetadata | undefined => {
-	if (!meta) {
-		return undefined;
-	}
-	const value = meta.openai;
-	if (!value || typeof value !== 'object') {
-		return undefined;
-	}
-	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
-	return value as OpenAIProviderMetadata;
-};
+const readOpenAIMeta = (meta: ProviderMetadata | undefined): OpenAIProviderMetadata | undefined =>
+	readProviderMeta<OpenAIProviderMetadata>(meta, 'openai');
 
 const toOpenAIInputItems = (m: ModelMessage): ResponseInputItem[] => {
 	switch (m.role) {

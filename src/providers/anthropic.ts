@@ -19,6 +19,7 @@ import {
 	type WireTool,
 } from '../adapter.ts';
 import { parseJsonSseStream, postJson, postSse } from '../internal/http.ts';
+import { readProviderMeta } from '../internal/provider-metadata.ts';
 import type {
 	AdapterChunk,
 	AssistantContent,
@@ -534,17 +535,8 @@ const toToolMessage = (content: ToolContent, messageMeta: ProviderMetadata | und
 	return { role: 'user', content: blocks };
 };
 
-const readAnthropicMeta = (meta: ProviderMetadata | undefined): AnthropicProviderMetadata | undefined => {
-	if (!meta) {
-		return undefined;
-	}
-	const value = meta.anthropic;
-	if (!value || typeof value !== 'object') {
-		return undefined;
-	}
-	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
-	return value as AnthropicProviderMetadata;
-};
+const readAnthropicMeta = (meta: ProviderMetadata | undefined): AnthropicProviderMetadata | undefined =>
+	readProviderMeta<AnthropicProviderMetadata>(meta, 'anthropic');
 
 const readCacheControl = (meta: ProviderMetadata | undefined): CacheControlEphemeral | undefined => {
 	const anthropicMeta = readAnthropicMeta(meta);
