@@ -113,7 +113,7 @@ const getWeather = tool({
 	inputSchema: z.object({
 		city: z.string(),
 	}),
-	execute: async ({ city }) => {
+	async execute({ city }) {
 		return { city, conditions: 'sunny', temperatureC: 23 };
 	},
 });
@@ -145,7 +145,7 @@ const searchDocs = tool({
 			url: z.string(),
 		}),
 	),
-	execute: async ({ query }) => {
+	async execute({ query }) {
 		return await search(query);
 	},
 });
@@ -187,7 +187,7 @@ const sendEmail = tool({
 		to: z.string(),
 		body: z.string(),
 	}),
-	execute: async ({ to, body }) => {
+	async execute({ to, body }) {
 		await sendgrid.send({ to, body });
 		return { sent: true };
 	},
@@ -261,7 +261,9 @@ while (true) {
 		}
 	}
 
-	if (finishReason !== 'awaiting-approval') break;
+	if (finishReason !== 'awaiting-approval') {
+		break;
+	}
 
 	const tail = messages.at(-1);
 	if (tail?.role === 'assistant') {
@@ -303,7 +305,7 @@ during the loop before the final structured response:
 ```ts
 const lookupCalendar = tool({
 	inputSchema: z.object({ name: z.string() }),
-	execute: async ({ name }) => {
+	async execute({ name }) {
 		return await findCalendar(name);
 	},
 });
@@ -349,7 +351,9 @@ const schema = jsonSchema<{ city: string }>(
 
 const getWeather = tool({
 	inputSchema: schema,
-	execute: ({ city }) => `weather for ${city}`,
+	execute({ city }) {
+		return `weather for ${city}`;
+	},
 });
 ```
 
