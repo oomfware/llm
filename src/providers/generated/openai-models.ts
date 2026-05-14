@@ -43,6 +43,7 @@ export type OpenAIKnownChatModelId =
 	| 'gpt-5.4-pro'
 	| 'gpt-5.5'
 	| 'gpt-5.5-pro'
+	| 'gpt-chat-latest'
 	| 'gpt-oss-120b'
 	| 'gpt-oss-20b'
 	| 'gpt-oss-safeguard-20b'
