@@ -1,3 +1,7 @@
+// rewriting a schema is non-trivial for large shapes; cache per input reference so repeat structured-output
+// calls against the same schema object don't re-walk the tree.
+const strictCache = new WeakMap<Record<string, unknown>, Record<string, unknown>>();
+
 /**
  * rewrite a JSON Schema for openai's `strict: true` mode: - every object gets `additionalProperties: false` -
  * every property must appear in `required` (originally-optional fields are made nullable to preserve their
@@ -6,7 +10,13 @@
  * recurses into properties, items, anyOf/oneOf/allOf, $defs/definitions.
  */
 export const makeOpenAIStrictCompatible = (schema: Record<string, unknown>): Record<string, unknown> => {
-	return rewriteSchema(schema);
+	const cached = strictCache.get(schema);
+	if (cached) {
+		return cached;
+	}
+	const rewritten = rewriteSchema(schema);
+	strictCache.set(schema, rewritten);
+	return rewritten;
 };
 
 const rewriteSchema = (schema: unknown): Record<string, unknown> => {
