@@ -16,7 +16,7 @@ import {
 	type StructuredOutputResult,
 	type WireTool,
 } from '../adapter.ts';
-import { parseJsonSseStream, postSse } from '../internal/http.ts';
+import { parseJsonSseStream, postJson, postSse } from '../internal/http.ts';
 import { makeOpenAIStrictCompatible, stripNulls } from '../internal/openai-strict.ts';
 import type {
 	AdapterChunk,
@@ -577,8 +577,8 @@ const openaiStructuredOutput = async (args: StructuredOpenAIArgs): Promise<Struc
 		max_output_tokens: args.maxTokens,
 	};
 
-	const response = await args.fetcher(`${args.baseUrl}/responses`, {
-		method: 'POST',
+	const json = await postJson<Response>({
+		url: `${args.baseUrl}/responses`,
 		headers: {
 			'content-type': 'application/json',
 			...(args.apiKey ? { authorization: `Bearer ${args.apiKey}` } : {}),
@@ -586,15 +586,9 @@ const openaiStructuredOutput = async (args: StructuredOpenAIArgs): Promise<Struc
 		},
 		body: JSON.stringify(body),
 		signal: args.signal,
+		fetch: args.fetcher,
+		errorPrefix: 'openai',
 	});
-
-	if (!response.ok) {
-		const text = await response.text().catch(() => '');
-		throw new Error(`openai: ${response.status} ${response.statusText} ${text}`);
-	}
-
-	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
-	const json = (await response.json()) as Response;
 	const rawText = json.output_text ?? '';
 
 	let parsed: unknown;

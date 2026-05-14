@@ -17,7 +17,7 @@ import {
 	type StructuredOutputResult,
 	type WireTool,
 } from '../adapter.ts';
-import { parseJsonSseStream, postSse } from '../internal/http.ts';
+import { parseJsonSseStream, postJson, postSse } from '../internal/http.ts';
 import { makeOpenAIStrictCompatible, stripNulls } from '../internal/openai-strict.ts';
 import type { AdapterChunk, FinishReason, ModelMessage, Usage } from '../types.ts';
 
@@ -400,8 +400,8 @@ const chatCompletionsStructuredOutput = async (args: StructuredArgs): Promise<St
 		Object.assign(body, args.extendBody((args.providerOptions ?? {}) as Record<string, unknown>));
 	}
 
-	const response = await args.fetcher(`${args.baseUrl}/chat/completions`, {
-		method: 'POST',
+	const json = await postJson<ChatCompletion>({
+		url: `${args.baseUrl}/chat/completions`,
 		headers: {
 			'content-type': 'application/json',
 			...(args.apiKey ? { authorization: `Bearer ${args.apiKey}` } : {}),
@@ -409,15 +409,9 @@ const chatCompletionsStructuredOutput = async (args: StructuredArgs): Promise<St
 		},
 		body: JSON.stringify(body),
 		signal: args.signal,
+		fetch: args.fetcher,
+		errorPrefix: args.name,
 	});
-
-	if (!response.ok) {
-		const text = await response.text().catch(() => '');
-		throw new Error(`${args.name}: ${response.status} ${response.statusText} ${text}`);
-	}
-
-	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
-	const json = (await response.json()) as ChatCompletion;
 	const rawText = json.choices?.[0]?.message?.content ?? '';
 
 	let parsed: unknown;

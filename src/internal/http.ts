@@ -2,7 +2,7 @@ import type { AdapterChunk } from '../types.ts';
 
 import { parseSseStream } from './sse.ts';
 
-export interface PostSseArgs {
+export interface PostArgs {
 	url: string;
 	headers: Record<string, string>;
 	body: string;
@@ -20,7 +20,7 @@ export type PostSseResult =
  * post a request that returns an SSE stream. handles network errors and non-2xx responses uniformly across
  * providers, returning either the response body for streaming or an `error` chunk to yield.
  */
-export const postSse = async (args: PostSseArgs): Promise<PostSseResult> => {
+export const postSse = async (args: PostArgs): Promise<PostSseResult> => {
 	let response: Response;
 	try {
 		response = await args.fetch(args.url, {
@@ -45,6 +45,25 @@ export const postSse = async (args: PostSseArgs): Promise<PostSseResult> => {
 	}
 
 	return { ok: true, body: response.body };
+};
+
+/**
+ * post a request that returns a single JSON body. throws a uniformly-prefixed error on non-2xx responses or
+ * network failures.
+ */
+export const postJson = async <T>(args: PostArgs): Promise<T> => {
+	const response = await args.fetch(args.url, {
+		method: 'POST',
+		headers: args.headers,
+		body: args.body,
+		signal: args.signal,
+	});
+	if (!response.ok) {
+		const text = await response.text().catch(() => '');
+		throw new Error(`${args.errorPrefix}: ${response.status} ${response.statusText} ${text}`);
+	}
+	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
+	return (await response.json()) as T;
 };
 
 /**

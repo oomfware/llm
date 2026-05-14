@@ -18,7 +18,7 @@ import {
 	type StructuredOutputResult,
 	type WireTool,
 } from '../adapter.ts';
-import { parseJsonSseStream, postSse } from '../internal/http.ts';
+import { parseJsonSseStream, postJson, postSse } from '../internal/http.ts';
 import type {
 	AdapterChunk,
 	AssistantContent,
@@ -651,8 +651,8 @@ const anthropicStructuredOutput = async (args: StructuredAnthropicArgs): Promise
 		top_p: args.topP,
 	};
 
-	const response = await args.fetcher(`${args.baseUrl}/messages`, {
-		method: 'POST',
+	const json = await postJson<Message>({
+		url: `${args.baseUrl}/messages`,
 		headers: {
 			'content-type': 'application/json',
 			...(args.apiKey ? { 'x-api-key': args.apiKey } : {}),
@@ -661,15 +661,9 @@ const anthropicStructuredOutput = async (args: StructuredAnthropicArgs): Promise
 		},
 		body: JSON.stringify(body),
 		signal: args.signal,
+		fetch: args.fetcher,
+		errorPrefix: 'anthropic',
 	});
-
-	if (!response.ok) {
-		const text = await response.text().catch(() => '');
-		throw new Error(`anthropic: ${response.status} ${response.statusText} ${text}`);
-	}
-
-	// oxlint-disable-next-line typescript/no-unsafe-type-assertion
-	const json = (await response.json()) as Message;
 	const toolUse = json.content.find((c) => c.type === 'tool_use');
 	if (!toolUse) {
 		throw new Error('anthropic: structured output response did not include a tool_use block');
