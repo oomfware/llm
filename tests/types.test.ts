@@ -1,12 +1,10 @@
-/**
- * type-only checks. these tests are no-ops at runtime; the `@ts-expect-error`
- * directives prove that:
- *   - per-model providerOptions narrow correctly
- *   - tool chunks discriminate on `name` to narrow `input` and `result`
- *
- * each test wraps assertions in a never-called function so the body is type
- * checked but performs no I/O.
- */
+// type-only checks. these tests are no-ops at runtime; the `@ts-expect-error`
+// directives prove that:
+//   - per-model providerOptions narrow correctly
+//   - tool chunks discriminate on `name` to narrow `input` and `result`
+//
+// each test wraps assertions in a never-called function so the body is type
+// checked but performs no I/O.
 import { test } from 'node:test';
 
 import { z } from 'zod';

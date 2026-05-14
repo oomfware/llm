@@ -17,8 +17,8 @@ const consumeLine = (rawLine: string): string | undefined => {
 };
 
 /**
- * tiny SSE event splitter. yields the `data:` payload of each event as a string.
- * handles `\n` and `\r\n`, and ignores comment lines and other event fields.
+ * tiny SSE event splitter. yields the `data:` payload of each event as a string. handles `\n` and `\r\n`, and
+ * ignores comment lines and other event fields.
  */
 export async function* parseSseStream(
 	stream: ReadableStream<Uint8Array>,

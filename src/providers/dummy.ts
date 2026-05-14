@@ -15,9 +15,8 @@ export interface DummyToolCall {
 }
 
 /**
- * a single ordered part the dummy adapter should emit. covers the same
- * variants the real adapters can produce, so tests can script reasoning +
- * text + tool-call interleavings.
+ * a single ordered part the dummy adapter should emit. covers the same variants the real adapters can
+ * produce, so tests can script reasoning + text + tool-call interleavings.
  */
 export type DummyPart =
 	| { type: 'text'; text: string; providerMetadata?: ProviderMetadata }
@@ -32,12 +31,11 @@ export type DummyPart =
 	  };
 
 /**
- * a single scripted response returned by the dummy adapter on the next call
- * to `chatStream`. one entry per agent-loop iteration.
+ * a single scripted response returned by the dummy adapter on the next call to `chatStream`. one entry per
+ * agent-loop iteration.
  *
- * if `parts` is omitted, `text` and `toolCalls` shorthand are expanded into
- * parts in that order. when a response has tool calls (in either form), the
- * default finish reason is `tool-calls`; otherwise `stop`.
+ * if `parts` is omitted, `text` and `toolCalls` shorthand are expanded into parts in that order. when a
+ * response has tool calls (in either form), the default finish reason is `tool-calls`; otherwise `stop`.
  */
 export interface DummyResponse {
 	parts?: DummyPart[];
@@ -52,13 +50,13 @@ export interface DummyResponse {
 export interface DummyConfig {
 	responses: DummyResponse[];
 	/**
-	 * how the adapter chunks text. `char` simulates streaming token-by-token,
-	 * `whole` emits the entire text in one delta. defaults to `char`.
+	 * how the adapter chunks text. `char` simulates streaming token-by-token, `whole` emits the entire text in
+	 * one delta. defaults to `char`.
 	 */
 	chunking?: 'char' | 'whole';
 	/**
-	 * scripted return value for `structuredOutput()` calls. consumed in order
-	 * across calls — one entry per call.
+	 * scripted return value for `structuredOutput()` calls. consumed in order across calls — one entry per
+	 * call.
 	 */
 	structuredOutputs?: unknown[];
 }

@@ -3,14 +3,14 @@ import type { InferToolInput, InferToolOutput } from './tool.ts';
 export type Role = 'system' | 'user' | 'assistant' | 'tool';
 
 /**
- * a free-form bag of provider-specific data that rides along on messages and
- * parts. keyed by provider name (e.g. `anthropic`, `openai`); the values are
- * defined by each adapter and are read+written without core type checks.
+ * a free-form bag of provider-specific data that rides along on messages and parts. keyed by provider name
+ * (e.g. `anthropic`, `openai`); the values are defined by each adapter and are read+written without core type
+ * checks.
  *
- * the bag exists so byte-faithful round-trips work without polluting the
- * core types with provider-specific fields. for example, `providerMetadata.anthropic.signature`
- * carries an extended-thinking signature, and `providerMetadata.anthropic.cacheControl`
- * marks a prompt-caching breakpoint. see each adapter for its own conventions.
+ * the bag exists so byte-faithful round-trips work without polluting the core types with provider-specific
+ * fields. for example, `providerMetadata.anthropic.signature` carries an extended-thinking signature, and
+ * `providerMetadata.anthropic.cacheControl` marks a prompt-caching breakpoint. see each adapter for its own
+ * conventions.
  */
 export type ProviderMetadata = Record<string, unknown>;
 
@@ -23,9 +23,9 @@ export interface TextPart {
 }
 
 /**
- * a chunk of model reasoning ("thinking") content. opaque verification data
- * that providers require on resume (e.g. anthropic's signature) lives in
- * `providerMetadata` and is round-tripped verbatim by the relevant adapter.
+ * a chunk of model reasoning ("thinking") content. opaque verification data that providers require on resume
+ * (e.g. anthropic's signature) lives in `providerMetadata` and is round-tripped verbatim by the relevant
+ * adapter.
  */
 export interface ReasoningPart {
 	type: 'reasoning';
@@ -34,10 +34,9 @@ export interface ReasoningPart {
 }
 
 /**
- * an opaque reasoning block — anthropic returns these when its safety
- * classifier replaces a thinking block. the `data` payload lives in
- * `providerMetadata.anthropic.data` and must be returned unchanged on
- * resume; there is no human-readable text.
+ * an opaque reasoning block — anthropic returns these when its safety classifier replaces a thinking block.
+ * the `data` payload lives in `providerMetadata.anthropic.data` and must be returned unchanged on resume;
+ * there is no human-readable text.
  */
 export interface RedactedReasoningPart {
 	type: 'redacted-reasoning';
@@ -45,16 +44,13 @@ export interface RedactedReasoningPart {
 }
 
 /**
- * a tool call as produced by the model. arguments are kept as a json string
- * because that's what every provider streams; parsing is deferred to the
- * agent loop right before invocation.
+ * a tool call as produced by the model. arguments are kept as a json string because that's what every
+ * provider streams; parsing is deferred to the agent loop right before invocation.
  *
- * `approval` carries the user's decision for tools marked
- * `needsApproval: true`. it lives on the persisted assistant message so
- * that history naturally carries the decision: present + `approved: true`
- * runs the call on resume, present + `approved: false` injects a rejection
- * tool message, absent suspends the loop with reason `awaiting-approval`.
- * adapters do not serialize this field — it's read only by the agent loop.
+ * `approval` carries the user's decision for tools marked `needsApproval: true`. it lives on the persisted
+ * assistant message so that history naturally carries the decision: present + `approved: true` runs the call
+ * on resume, present + `approved: false` injects a rejection tool message, absent suspends the loop with
+ * reason `awaiting-approval`. adapters do not serialize this field — it's read only by the agent loop.
  */
 export interface ToolCallPart {
 	type: 'tool-call';
@@ -85,12 +81,11 @@ export type SystemContent = TextPart[];
 export type UserContent = TextPart[];
 
 /**
- * content allowed on an assistant message — text, reasoning, redacted
- * reasoning, and tool calls, in the exact order the model produced them.
+ * content allowed on an assistant message — text, reasoning, redacted reasoning, and tool calls, in the exact
+ * order the model produced them.
  *
- * preserving this order matters for prompt caching: anthropic and openai
- * both compute cache prefixes against the wire bytes, so reordering parts
- * between turns invalidates the cache.
+ * preserving this order matters for prompt caching: anthropic and openai both compute cache prefixes against
+ * the wire bytes, so reordering parts between turns invalidates the cache.
  */
 export type AssistantContent = (TextPart | ReasoningPart | RedactedReasoningPart | ToolCallPart)[];
 
@@ -136,11 +131,9 @@ export type FinishReason =
 	| 'content-filter'
 	| 'error'
 	/**
-	 * the loop suspended because at least one tool call in the most recent
-	 * assistant turn is gated by `needsApproval` and no decision was
-	 * supplied. resume by setting `approval` on each pending tool-call part
-	 * in the persisted assistant message and re-invoking `chat()` with the
-	 * same `messages` array.
+	 * the loop suspended because at least one tool call in the most recent assistant turn is gated by
+	 * `needsApproval` and no decision was supplied. resume by setting `approval` on each pending tool-call part
+	 * in the persisted assistant message and re-invoking `chat()` with the same `messages` array.
 	 */
 	| 'awaiting-approval';
 
@@ -158,14 +151,12 @@ export interface Usage {
 // #region adapter-emitted chunks
 
 /**
- * what an adapter yields on the wire. the agent loop in `chat()` consumes
- * these, accumulates parts, runs tools, and re-emits a richer
- * {@link StreamChunk} for the public api.
+ * what an adapter yields on the wire. the agent loop in `chat()` consumes these, accumulates parts, runs
+ * tools, and re-emits a richer {@link StreamChunk} for the public api.
  *
- * parts are opened (`*-start`), streamed in deltas, then closed (`*-end`).
- * the chat loop builds the assistant message's `content[]` by appending each
- * closed part in the order they end, which is the order the model emitted
- * them on the wire.
+ * parts are opened (`*-start`), streamed in deltas, then closed (`*-end`). the chat loop builds the assistant
+ * message's `content[]` by appending each closed part in the order they end, which is the order the model
+ * emitted them on the wire.
  */
 export type AdapterChunk =
 	| { type: 'text-start'; id: string; providerMetadata?: ProviderMetadata }
@@ -188,8 +179,8 @@ export type AdapterChunk =
 type ToolName<TTools> = keyof TTools & string;
 
 /**
- * the tool-related variants of {@link StreamChunk}, distributed over each
- * registered tool so `name` is a literal and `input`/`result` narrow.
+ * the tool-related variants of {@link StreamChunk}, distributed over each registered tool so `name` is a
+ * literal and `input`/`result` narrow.
  *
  * collapses to `never` when `TTools` is empty.
  */
@@ -204,19 +195,18 @@ export type ToolChunks<TTools> = {
 }[ToolName<TTools>];
 
 /**
- * the public chunk union yielded by `chat()`. parameterised by the tools
- * record so that:
- *   - `chunk.name` on tool variants is the literal key (e.g. `'get_weather'`)
- *   - discriminating on `chunk.name` narrows `chunk.input` / `chunk.result`
- *     to the matching tool's input/output types
+ * the public chunk union yielded by `chat()`. parameterised by the tools record so that:
+ *
+ * - `chunk.name` on tool variants is the literal key (e.g. `'get_weather'`)
+ * - discriminating on `chunk.name` narrows `chunk.input` / `chunk.result` to the matching tool's input/output
+ *   types
  *
  * with no tools registered (`TTools = {}`), tool variants drop out entirely.
  *
- * a `message` chunk is yielded each time the loop commits an assistant or
- * tool message to the conversation. callers persisting history can append
- * `chunk.message` directly; on `awaiting-approval`, the most recent
- * assistant `message` chunk is the resume handle whose tool-call parts'
- * `approval` field the caller mutates before re-invoking `chat()`.
+ * a `message` chunk is yielded each time the loop commits an assistant or tool message to the conversation.
+ * callers persisting history can append `chunk.message` directly; on `awaiting-approval`, the most recent
+ * assistant `message` chunk is the resume handle whose tool-call parts' `approval` field the caller mutates
+ * before re-invoking `chat()`.
  */
 export type StreamChunk<TTools = {}> =
 	| { type: 'text-delta'; delta: string }

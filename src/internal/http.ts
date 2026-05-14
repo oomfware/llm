@@ -17,9 +17,8 @@ export type PostSseResult =
 	| { ok: false; error: AdapterChunk & { type: 'error' } };
 
 /**
- * post a request that returns an SSE stream. handles network errors and
- * non-2xx responses uniformly across providers, returning either the response
- * body for streaming or an `error` chunk to yield.
+ * post a request that returns an SSE stream. handles network errors and non-2xx responses uniformly across
+ * providers, returning either the response body for streaming or an `error` chunk to yield.
  */
 export const postSse = async (args: PostSseArgs): Promise<PostSseResult> => {
 	let response: Response;
@@ -51,8 +50,8 @@ export const postSse = async (args: PostSseArgs): Promise<PostSseResult> => {
 /**
  * iterate JSON-encoded SSE events. malformed events are silently skipped.
  *
- * @param sentinel - if provided, breaks the stream when this exact data
- *   payload is received (e.g. OpenAI's `[DONE]`).
+ * @param sentinel if provided, breaks the stream when this exact data payload is received (e.g. OpenAI's
+ *   `[DONE]`).
  */
 export async function* parseJsonSseStream<T>(
 	stream: ReadableStream<Uint8Array>,

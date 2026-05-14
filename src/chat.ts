@@ -22,25 +22,23 @@ import type {
 } from './types.ts';
 
 /**
- * options for {@link chat}. provider-specific options are typed against the
- * adapter's pre-resolved `~types.providerOptions`, so passing
- * `openai('gpt-5')` narrows `providerOptions` to gpt-5's shape.
+ * options for {@link chat}. provider-specific options are typed against the adapter's pre-resolved
+ * `~types.providerOptions`, so passing `openai('gpt-5')` narrows `providerOptions` to gpt-5's shape.
  */
 export interface ChatOptions<TAdapter extends AnyChatAdapter, TTools extends Record<string, AnyTool>> {
 	adapter: TAdapter;
 	messages: ModelMessage[];
 	/**
-	 * tools the model can call. names are the record keys; the same tool
-	 * value can be registered under different names.
+	 * tools the model can call. names are the record keys; the same tool value can be registered under
+	 * different names.
 	 */
 	tools?: TTools;
 	temperature?: number;
 	topP?: number;
 	maxTokens?: number;
 	/**
-	 * controls when the agent loop stops. defaults to `maxIterations(5)`.
-	 * when the strategy returns false before the model naturally finishes,
-	 * a `finish` chunk with reason `length` is emitted.
+	 * controls when the agent loop stops. defaults to `maxIterations(5)`. when the strategy returns false
+	 * before the model naturally finishes, a `finish` chunk with reason `length` is emitted.
 	 *
 	 * compose multiple strategies via `combineStrategies(...)`.
 	 */
@@ -50,24 +48,20 @@ export interface ChatOptions<TAdapter extends AnyChatAdapter, TTools extends Rec
 }
 
 /**
- * run an agentic chat turn against an adapter, executing any matching tools
- * and feeding their results back into the model until the model stops
- * requesting tools or `maxIterations` is reached.
+ * run an agentic chat turn against an adapter, executing any matching tools and feeding their results back
+ * into the model until the model stops requesting tools or `maxIterations` is reached.
  *
- * @returns an async iterable of {@link StreamChunk}s. tool-related chunks are
- * narrowed by `name` so `chunk.input` and `chunk.result` are typed against
- * the matching tool's schema.
+ * @returns an async iterable of {@link StreamChunk}s. tool-related chunks are narrowed by `name` so
+ *   `chunk.input` and `chunk.result` are typed against the matching tool's schema.
  */
 export const chat = <TAdapter extends AnyChatAdapter, const TTools extends Record<string, AnyTool> = {}>(
 	options: ChatOptions<TAdapter, TTools>,
 ): AsyncIterable<StreamChunk<TTools>> => runChat(options);
 
 /**
- * cast helper for chunks whose runtime shape is structurally a
- * `StreamChunk<TTools>` but whose `name` field carries a `string` instead
- * of the literal `keyof TTools` the type system requires. justified at the
- * boundary between the wire-typed adapter and the literal-typed public
- * stream.
+ * cast helper for chunks whose runtime shape is structurally a `StreamChunk<TTools>` but whose `name` field
+ * carries a `string` instead of the literal `keyof TTools` the type system requires. justified at the
+ * boundary between the wire-typed adapter and the literal-typed public stream.
  */
 const passthrough = <TTools extends Record<string, AnyTool>>(
 	chunk: object,

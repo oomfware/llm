@@ -8,8 +8,8 @@ import type { AnyTool } from './tool.ts';
 import type { AssistantMessage, FinishReason, ModelMessage, Usage } from './types.ts';
 
 /**
- * the schema a structured-output call constrains its result to. must be both
- * Standard Schema (for validation) and Standard JSON Schema (for the wire).
+ * the schema a structured-output call constrains its result to. must be both Standard Schema (for validation)
+ * and Standard JSON Schema (for the wire).
  */
 export type ObjectSchema<T> = StandardSchemaV1<unknown, T> & StandardJSONSchemaV1<unknown, T>;
 
@@ -45,8 +45,8 @@ export interface GenerateObjectResult<T> {
 }
 
 /**
- * run an agentic chat to convergence, then make a single non-streaming model
- * call constrained to {@link ObjectSchema} and return the validated object.
+ * run an agentic chat to convergence, then make a single non-streaming model call constrained to
+ * {@link ObjectSchema} and return the validated object.
  *
  * @throws when the provider returns malformed JSON or when validation against
  * the schema fails.

@@ -32,16 +32,15 @@ import type { OpenAIKnownChatModelId } from './generated/openai-models.ts';
 // #region per-model type machinery
 
 /**
- * known OpenAI chat models. the `(string & {})` tail keeps autocomplete
- * working for known entries while still accepting any other model string
- * (e.g. fine-tunes, future releases). the literal union is generated —
- * see `scripts/update-models.ts`.
+ * known OpenAI chat models. the `(string & {})` tail keeps autocomplete working for known entries while still
+ * accepting any other model string (e.g. fine-tunes, future releases). the literal union is generated — see
+ * `scripts/update-models.ts`.
  */
 export type OpenAIChatModel = OpenAIKnownChatModelId | (string & {});
 
 /**
- * the user-facing shape mirrors the Responses API `text.format` wire shape
- * directly so it can be passed through without conversion.
+ * the user-facing shape mirrors the Responses API `text.format` wire shape directly so it can be passed
+ * through without conversion.
  */
 interface OpenAIJsonSchemaResponseFormat {
 	type: 'json_schema';
@@ -60,17 +59,15 @@ interface OpenAIBaseProviderOptions {
 interface OpenAIReasoningProviderOptions extends OpenAIBaseProviderOptions {
 	reasoningEffort?: 'low' | 'medium' | 'high';
 	/**
-	 * request `include: ['reasoning.encrypted_content']` so reasoning items
-	 * round-trip on resume without server-side state. defaults to true when
-	 * `reasoningEffort` is set.
+	 * request `include: ['reasoning.encrypted_content']` so reasoning items round-trip on resume without
+	 * server-side state. defaults to true when `reasoningEffort` is set.
 	 */
 	includeEncryptedReasoning?: boolean;
 }
 
 /**
- * openai-specific provider metadata recognised by this adapter on assistant
- * messages and parts. extra keys are passed through verbatim — only the
- * documented ones below are interpreted.
+ * openai-specific provider metadata recognised by this adapter on assistant messages and parts. extra keys
+ * are passed through verbatim — only the documented ones below are interpreted.
  */
 export interface OpenAIProviderMetadata {
 	/** the responses-api item id (e.g. `rs_...`, `msg_...`, `fc_...`) for round-trip. */
@@ -86,8 +83,8 @@ export interface OpenAIProviderMetadata {
 }
 
 /**
- * per-model overrides. add an entry here when a model has options the base
- * shape doesn't cover. unlisted models fall back to {@link OpenAIBaseProviderOptions}.
+ * per-model overrides. add an entry here when a model has options the base shape doesn't cover. unlisted
+ * models fall back to {@link OpenAIBaseProviderOptions}.
  */
 interface OpenAIChatModelProviderOptionsByName {
 	'gpt-5': OpenAIReasoningProviderOptions;
@@ -122,8 +119,8 @@ export type OpenAIAdapter<TModel extends OpenAIChatModel = OpenAIChatModel> = Ch
 >;
 
 /**
- * create an OpenAI chat adapter for a given model. provider options (e.g.
- * `reasoningEffort`) narrow based on the model literal.
+ * create an OpenAI chat adapter for a given model. provider options (e.g. `reasoningEffort`) narrow based on
+ * the model literal.
  */
 export const openai = <const TModel extends OpenAIChatModel>(
 	model: TModel,

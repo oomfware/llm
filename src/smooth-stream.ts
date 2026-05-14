@@ -4,13 +4,10 @@ import type { StreamChunk } from './types.ts';
 /**
  * how `text-delta` chunks are split into emitted units.
  *
- * - `'word'`: emit at whitespace boundaries (each word plus its trailing
- *   whitespace).
- * - `'line'`: emit at newline boundaries (each line including the trailing
- *   `\n`).
- * - `RegExp`: emit when the regex matches against the buffered text. the
- *   matched text plus everything before it is flushed as one chunk. the
- *   regex is normalised to non-global; supplying `/g` is fine.
+ * - `'word'`: emit at whitespace boundaries (each word plus its trailing whitespace).
+ * - `'line'`: emit at newline boundaries (each line including the trailing `\n`).
+ * - `RegExp`: emit when the regex matches against the buffered text. the matched text plus everything before it
+ *   is flushed as one chunk. the regex is normalised to non-global; supplying `/g` is fine.
  */
 export type SmoothChunking = 'word' | 'line' | RegExp;
 
@@ -21,25 +18,21 @@ export interface SmoothStreamOptions {
 }
 
 /**
- * smooth a chat stream's `text-delta` chunks into larger, more ui-friendly
- * units (words, lines, or a custom regex boundary). non-text chunks
- * (`reasoning-delta`, tool chunks, `finish`, `error`) pass through unchanged
- * and *in order* — pending text is flushed before each non-text chunk so the
- * downstream consumer sees a consistent timeline.
+ * smooth a chat stream's `text-delta` chunks into larger, more ui-friendly units (words, lines, or a custom
+ * regex boundary). non-text chunks (`reasoning-delta`, tool chunks, `finish`, `error`) pass through unchanged
+ * and _in order_ — pending text is flushed before each non-text chunk so the downstream consumer sees a
+ * consistent timeline.
  *
- * preserves the public {@link StreamChunk} generic so tool chunk narrowing
- * still works downstream.
+ * preserves the public {@link StreamChunk} generic so tool chunk narrowing still works downstream.
  *
  * @example
- * ```ts
- * import { chat, openai, smoothStream } from '@oomfware/llm';
+ * 	import { chat, openai, smoothStream } from '@oomfware/llm';
  *
- * for await (const chunk of smoothStream(chat({ adapter, messages }), { chunking: 'word' })) {
- *   if (chunk.type === 'text-delta') {
- *     process.stdout.write(chunk.delta);
- *   }
- * }
- * ```
+ * 	for await (const chunk of smoothStream(chat({ adapter, messages }), { chunking: 'word' })) {
+ * 		if (chunk.type === 'text-delta') {
+ * 			process.stdout.write(chunk.delta);
+ * 		}
+ * 	}
  */
 export const smoothStream = <TTools extends Record<string, AnyTool> = {}>(
 	stream: AsyncIterable<StreamChunk<TTools>>,

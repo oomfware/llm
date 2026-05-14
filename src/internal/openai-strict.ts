@@ -1,8 +1,7 @@
 /**
- * rewrite a JSON Schema for openai's `strict: true` mode:
- *  - every object gets `additionalProperties: false`
- *  - every property must appear in `required` (originally-optional fields are
- *    made nullable to preserve their meaning)
+ * rewrite a JSON Schema for openai's `strict: true` mode: - every object gets `additionalProperties: false` -
+ * every property must appear in `required` (originally-optional fields are made nullable to preserve their
+ * meaning)
  *
  * recurses into properties, items, anyOf/oneOf/allOf, $defs/definitions.
  */
@@ -74,8 +73,8 @@ const makeNullable = (schema: Record<string, unknown>): Record<string, unknown> 
 };
 
 /**
- * strip top-level `null` values that originated from optional fields we made
- * nullable for strict mode. recursively descends into nested objects/arrays.
+ * strip top-level `null` values that originated from optional fields we made nullable for strict mode.
+ * recursively descends into nested objects/arrays.
  */
 export const stripNulls = (value: unknown): unknown => {
 	if (value === null) {

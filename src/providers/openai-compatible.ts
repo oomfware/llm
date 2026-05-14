@@ -22,8 +22,8 @@ import { makeOpenAIStrictCompatible, stripNulls } from '../internal/openai-stric
 import type { AdapterChunk, FinishReason, ModelMessage, Usage } from '../types.ts';
 
 /**
- * provider options shared by all OpenAI Chat Completions-shaped backends.
- * wrappers (e.g. `openrouter`) extend this with their own fields.
+ * provider options shared by all OpenAI Chat Completions-shaped backends. wrappers (e.g. `openrouter`) extend
+ * this with their own fields.
  */
 export interface OpenAICompatibleProviderOptions {
 	user?: string;
@@ -35,8 +35,8 @@ export interface OpenAICompatibleProviderOptions {
 
 export interface OpenAICompatibleConfig {
 	/**
-	 * provider label. surfaces on the returned adapter as `adapter.provider` and
-	 * is used in error message prefixes.
+	 * provider label. surfaces on the returned adapter as `adapter.provider` and is used in error message
+	 * prefixes.
 	 */
 	name: string;
 	/** base url for the chat completions endpoint, without `/chat/completions`. */
@@ -45,17 +45,16 @@ export interface OpenAICompatibleConfig {
 	headers?: Record<string, string>;
 	fetch?: typeof fetch;
 	/**
-	 * hook for wrappers to fold provider-specific provider-options into the
-	 * wire body. receives the raw `providerOptions` value and returns extra
-	 * fields to merge into the request.
+	 * hook for wrappers to fold provider-specific provider-options into the wire body. receives the raw
+	 * `providerOptions` value and returns extra fields to merge into the request.
 	 */
 	extendBody?: (providerOptions: Record<string, unknown>) => Record<string, unknown>;
 }
 
 /**
- * create a chat adapter against an OpenAI Chat Completions-compatible endpoint.
- * use this directly for ad-hoc compat providers, or wrap it (see `openrouter`)
- * to expose typed model literals and provider-specific options.
+ * create a chat adapter against an OpenAI Chat Completions-compatible endpoint. use this directly for ad-hoc
+ * compat providers, or wrap it (see `openrouter`) to expose typed model literals and provider-specific
+ * options.
  */
 export const openaiCompatible = <
 	const TModel extends string,

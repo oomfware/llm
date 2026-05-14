@@ -1,9 +1,8 @@
 import type { AdapterChunk, ModelMessage } from './types.ts';
 
 /**
- * a tool as the adapter sees it on the wire. JSON Schema has already been
- * extracted from the tool's Standard JSON Schema by `chat()`, so adapters
- * never deal with schema libs.
+ * a tool as the adapter sees it on the wire. JSON Schema has already been extracted from the tool's Standard
+ * JSON Schema by `chat()`, so adapters never deal with schema libs.
  */
 export interface WireTool {
 	name: string;
@@ -11,9 +10,7 @@ export interface WireTool {
 	jsonSchema: Record<string, unknown>;
 }
 
-/**
- * what `chat()` hands to an adapter on each turn.
- */
+/** what `chat()` hands to an adapter on each turn. */
 export interface ChatStreamOptions<TProviderOptions> {
 	messages: ModelMessage[];
 	tools?: WireTool[];
@@ -24,9 +21,7 @@ export interface ChatStreamOptions<TProviderOptions> {
 	providerOptions?: TProviderOptions;
 }
 
-/**
- * options passed to {@link ChatAdapter.structuredOutput}.
- */
+/** options passed to {@link ChatAdapter.structuredOutput}. */
 export interface StructuredOutputOptions<TProviderOptions> {
 	messages: ModelMessage[];
 	/** JSON Schema for the expected output, already extracted from a Standard JSON Schema. */
@@ -48,12 +43,11 @@ export interface StructuredOutputResult {
 }
 
 /**
- * a chat adapter. created by a provider factory like `openai('gpt-4o')`,
- * which pre-resolves `TModel` and `TProviderOptions` so callers never write
- * generics by hand.
+ * a chat adapter. created by a provider factory like `openai('gpt-4o')`, which pre-resolves `TModel` and
+ * `TProviderOptions` so callers never write generics by hand.
  *
- * the `~types` property is a phantom: it carries inference info to `chat()`
- * via `TAdapter['~types']['providerOptions']` but is never assigned at runtime.
+ * the `~types` property is a phantom: it carries inference info to `chat()` via
+ * `TAdapter['~types']['providerOptions']` but is never assigned at runtime.
  */
 export interface ChatAdapter<TModel extends string = string, TProviderOptions = unknown> {
 	readonly kind: 'chat';
@@ -64,9 +58,8 @@ export interface ChatAdapter<TModel extends string = string, TProviderOptions = 
 	};
 	chatStream(options: ChatStreamOptions<TProviderOptions>): AsyncIterable<AdapterChunk>;
 	/**
-	 * make a single non-streaming model call constrained to a JSON Schema.
-	 * called by `generateObject()` after the agent loop converges. providers
-	 * that don't natively support structured output may simulate it (e.g.
+	 * make a single non-streaming model call constrained to a JSON Schema. called by `generateObject()` after
+	 * the agent loop converges. providers that don't natively support structured output may simulate it (e.g.
 	 * via tool prefill on Anthropic).
 	 */
 	structuredOutput(options: StructuredOutputOptions<TProviderOptions>): Promise<StructuredOutputResult>;
@@ -75,8 +68,8 @@ export interface ChatAdapter<TModel extends string = string, TProviderOptions = 
 export type AnyChatAdapter = ChatAdapter<any, any>;
 
 /**
- * runtime constructor for adapter values. lets provider factories return a
- * plain object without having to fake the phantom `~types` field at runtime.
+ * runtime constructor for adapter values. lets provider factories return a plain object without having to
+ * fake the phantom `~types` field at runtime.
  *
  * the cast is the single isolated point where the phantom field is fabricated.
  */

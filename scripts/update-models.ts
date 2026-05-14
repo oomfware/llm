@@ -1,14 +1,12 @@
-/**
- * fetches openrouter's public catalog and regenerates the literal-union files
- * under `src/providers/generated/`. run via `pnpm update-models`.
- *
- * openrouter is the single source of truth here — its catalog covers all
- * providers we care about and requires no api key. for anthropic we strip
- * the `anthropic/` prefix and normalize dots to dashes (so openrouter's
- * `claude-sonnet-4.5` becomes anthropic's native `claude-sonnet-4-5`).
- *
- * pass `--only=anthropic,openai,openrouter` to limit which providers run.
- */
+// fetches openrouter's public catalog and regenerates the literal-union files
+// under `src/providers/generated/`. run via `pnpm update-models`.
+//
+// openrouter is the single source of truth here — its catalog covers all
+// providers we care about and requires no api key. for anthropic we strip
+// the `anthropic/` prefix and normalize dots to dashes (so openrouter's
+// `claude-sonnet-4.5` becomes anthropic's native `claude-sonnet-4-5`).
+//
+// pass `--only=anthropic,openai,openrouter` to limit which providers run.
 
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -22,8 +20,8 @@ const OPENROUTER_URL = 'https://openrouter.ai/api/v1/models';
 const OPENROUTER_RANKED_URL = 'https://openrouter.ai/api/frontend/models/find?order=top-weekly';
 
 /**
- * cap the openrouter union to the N most-used models. anthropic/openai unions
- * stay full because their slugs are pre-filtered by prefix and already small.
+ * cap the openrouter union to the N most-used models. anthropic/openai unions stay full because their slugs
+ * are pre-filtered by prefix and already small.
  */
 const OPENROUTER_TOP_N = 150;
 
@@ -58,9 +56,9 @@ const fetchOpenRouterCatalog = async (): Promise<OpenRouterModel[]> => {
 };
 
 /**
- * fetches openrouter's `top-weekly` ranking and returns slugs in popularity
- * order. uses the frontend endpoint — undocumented but the only public source
- * of usage-based ranking, mirroring what powers openrouter.ai/rankings.
+ * fetches openrouter's `top-weekly` ranking and returns slugs in popularity order. uses the frontend endpoint
+ * — undocumented but the only public source of usage-based ranking, mirroring what powers
+ * openrouter.ai/rankings.
  */
 const fetchOpenRouterRanking = async (): Promise<string[]> => {
 	const res = await fetch(OPENROUTER_RANKED_URL);
@@ -71,9 +69,9 @@ const fetchOpenRouterRanking = async (): Promise<string[]> => {
 };
 
 /**
- * true only when the model's sole output is text. catches multimodal generators
- * like gemini-flash-image (`['image', 'text']`) and lyria (`['text', 'audio']`)
- * that emit text as a secondary channel but aren't chat models.
+ * true only when the model's sole output is text. catches multimodal generators like gemini-flash-image
+ * (`['image', 'text']`) and lyria (`['text', 'audio']`) that emit text as a secondary channel but aren't chat
+ * models.
  */
 const outputsTextOnly = (m: OpenRouterModel): boolean => {
 	const out = m.architecture?.output_modalities ?? [];
@@ -81,9 +79,8 @@ const outputsTextOnly = (m: OpenRouterModel): boolean => {
 };
 
 /**
- * drop models scheduled for sunset on or before today. openrouter sets
- * `expiration_date` (ISO `YYYY-MM-DD`) when a provider has announced a
- * deprecation date; the model still answers requests until then.
+ * drop models scheduled for sunset on or before today. openrouter sets `expiration_date` (ISO `YYYY-MM-DD`)
+ * when a provider has announced a deprecation date; the model still answers requests until then.
  */
 const isExpired = (m: OpenRouterModel, today: string): boolean => {
 	const date = m.expiration_date;
@@ -113,10 +110,9 @@ interface Target {
 const today = todayISO();
 
 /**
- * the `~vendor/...-latest` slugs route to whichever model openrouter currently
- * considers "latest" in a family. their stability isn't guaranteed by the
- * provider, so we exclude them from the autocomplete list — `(string & {})`
- * still lets users pass them explicitly.
+ * the `~vendor/...-latest` slugs route to whichever model openrouter currently considers "latest" in a
+ * family. their stability isn't guaranteed by the provider, so we exclude them from the autocomplete list —
+ * `(string & {})` still lets users pass them explicitly.
  */
 const isLive = (m: OpenRouterModel): boolean =>
 	outputsTextOnly(m) && !m.id.startsWith('~') && !isExpired(m, today);

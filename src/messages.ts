@@ -18,10 +18,8 @@ interface MetaOptions {
  * build a {@link TextPart}.
  *
  * @example
- * ```ts
- * text('hello')
- * text('cached', { providerMetadata: { anthropic: { cacheControl: { type: 'ephemeral' } } } })
- * ```
+ * 	text('hello');
+ * 	text('cached', { providerMetadata: { anthropic: { cacheControl: { type: 'ephemeral' } } } });
  */
 export const text = (content: string, options: MetaOptions = {}): TextPart => ({
 	type: 'text',
@@ -33,9 +31,7 @@ export const text = (content: string, options: MetaOptions = {}): TextPart => ({
  * build a {@link SystemMessage} from a string.
  *
  * @example
- * ```ts
- * system('answer in one sentence.')
- * ```
+ * 	system('answer in one sentence.');
  */
 export const system = (content: string, options: MetaOptions = {}): SystemMessage => ({
 	role: 'system',
@@ -44,15 +40,17 @@ export const system = (content: string, options: MetaOptions = {}): SystemMessag
 });
 
 /**
- * build a {@link UserMessage}. accepts either a plain string or a content
- * array for advanced cases (e.g. attaching a cache-control marker to a
- * specific text part).
+ * build a {@link UserMessage}. accepts either a plain string or a content array for advanced cases (e.g.
+ * attaching a cache-control marker to a specific text part).
  *
  * @example
- * ```ts
- * user('what is sqlite?')
- * user([text('part one'), text('part two', { providerMetadata: { anthropic: { cacheControl: { type: 'ephemeral' } } } })])
- * ```
+ * 	user('what is sqlite?');
+ * 	user([
+ * 		text('part one'),
+ * 		text('part two', {
+ * 			providerMetadata: { anthropic: { cacheControl: { type: 'ephemeral' } } },
+ * 		}),
+ * 	]);
  */
 export const user = (content: string | TextPart[], options: MetaOptions = {}): UserMessage => ({
 	role: 'user',
@@ -61,8 +59,8 @@ export const user = (content: string | TextPart[], options: MetaOptions = {}): U
 });
 
 /**
- * build an {@link AssistantMessage}. mostly useful in tests and when
- * pre-seeding the conversation with a prefilled assistant turn.
+ * build an {@link AssistantMessage}. mostly useful in tests and when pre-seeding the conversation with a
+ * prefilled assistant turn.
  */
 export const assistant = (
 	content: string | AssistantContent,
@@ -77,12 +75,10 @@ export const assistant = (
  * build a {@link ToolMessage} carrying one or more tool results.
  *
  * @example
- * ```ts
- * toolResults([
- *   { toolCallId: 'call_1', output: '{"temperatureC":23}' },
- *   { toolCallId: 'call_2', output: 'error: not found', isError: true },
- * ])
- * ```
+ * 	toolResults([
+ * 		{ toolCallId: 'call_1', output: '{"temperatureC":23}' },
+ * 		{ toolCallId: 'call_2', output: 'error: not found', isError: true },
+ * 	]);
  */
 export const toolResults = (
 	results: ToolContent | ToolResultPart[],

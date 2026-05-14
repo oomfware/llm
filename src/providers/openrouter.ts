@@ -4,16 +4,15 @@ import type { OpenRouterKnownModelId } from './generated/openrouter-models.ts';
 import { openaiCompatible, type OpenAICompatibleProviderOptions } from './openai-compatible.ts';
 
 /**
- * known OpenRouter model slugs. the `(string & {})` tail keeps autocomplete
- * working for known entries while still accepting any other model string —
- * OpenRouter's catalog grows constantly. the literal union is generated —
- * see `scripts/update-models.ts`.
+ * known OpenRouter model slugs. the `(string & {})` tail keeps autocomplete working for known entries while
+ * still accepting any other model string — OpenRouter's catalog grows constantly. the literal union is
+ * generated — see `scripts/update-models.ts`.
  */
 export type OpenRouterModel = OpenRouterKnownModelId | (string & {});
 
 /**
- * OpenRouter routing/provider preferences. mirrors the upstream JSON shape —
- * see https://openrouter.ai/docs/features/provider-routing.
+ * OpenRouter routing/provider preferences. mirrors the upstream JSON shape — see
+ * https://openrouter.ai/docs/features/provider-routing.
  */
 export interface OpenRouterProviderPreferences {
 	order?: string[];
@@ -53,10 +52,9 @@ export type OpenRouterAdapter<TModel extends OpenRouterModel = OpenRouterModel> 
 >;
 
 /**
- * create an OpenRouter chat adapter. talks to the OpenAI-compatible Chat
- * Completions endpoint at `openrouter.ai/api/v1`, with extra provider-routing
- * fields (`models`, `route`, `provider`, `transforms`) available via
- * `providerOptions`.
+ * create an OpenRouter chat adapter. talks to the OpenAI-compatible Chat Completions endpoint at
+ * `openrouter.ai/api/v1`, with extra provider-routing fields (`models`, `route`, `provider`, `transforms`)
+ * available via `providerOptions`.
  */
 export const openrouter = <const TModel extends OpenRouterModel>(
 	model: TModel,

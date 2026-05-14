@@ -1,9 +1,8 @@
 import type { StreamChunk } from '../src/types.ts';
 
 /**
- * build a fake `Response` whose body streams the given lines as SSE
- * `data: <line>\n\n` events. each entry is one event payload (typically a
- * `JSON.stringify(...)` or the literal `'[DONE]'`).
+ * build a fake `Response` whose body streams the given lines as SSE `data: <line>\n\n` events. each entry is
+ * one event payload (typically a `JSON.stringify(...)` or the literal `'[DONE]'`).
  */
 export const sseResponse = (events: string[]): Response => {
 	const enc = new TextEncoder();
@@ -40,8 +39,8 @@ interface AnthropicTextOptions {
 }
 
 /**
- * scripted SSE events for a single anthropic text content block, optionally
- * with `message_start`/`message_delta` framing.
+ * scripted SSE events for a single anthropic text content block, optionally with
+ * `message_start`/`message_delta` framing.
  */
 export const anthropicTextEvents = (opts: AnthropicTextOptions): string[] => {
 	const events: string[] = [];

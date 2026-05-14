@@ -36,9 +36,8 @@ import type { AnthropicKnownModelId } from './generated/anthropic-models.ts';
 // #region per-model type machinery
 
 /**
- * known anthropic chat models. the `(string & {})` tail keeps autocomplete
- * working for known entries while still accepting any other model string.
- * the literal union is generated — see `scripts/update-models.ts`.
+ * known anthropic chat models. the `(string & {})` tail keeps autocomplete working for known entries while
+ * still accepting any other model string. the literal union is generated — see `scripts/update-models.ts`.
  */
 export type AnthropicModel = AnthropicKnownModelId | (string & {});
 
@@ -49,9 +48,8 @@ export interface AnthropicCacheControl {
 }
 
 /**
- * anthropic-specific provider metadata recognised by this adapter on
- * messages and parts. extra keys are passed through verbatim — only the
- * documented ones below are interpreted.
+ * anthropic-specific provider metadata recognised by this adapter on messages and parts. extra keys are
+ * passed through verbatim — only the documented ones below are interpreted.
  */
 export interface AnthropicProviderMetadata {
 	/** stamp `cache_control` on the wire block this metadata is attached to. */
@@ -369,9 +367,8 @@ const prepareMessages = (messages: ModelMessage[]): PreparedRequest => {
 };
 
 /**
- * resolve the cache_control marker for a given content part. part-level
- * metadata wins; otherwise the message-level marker applies only to the
- * last part of the message (the cache breakpoint).
+ * resolve the cache_control marker for a given content part. part-level metadata wins; otherwise the
+ * message-level marker applies only to the last part of the message (the cache breakpoint).
  */
 const resolveCacheControl = (
 	partMeta: ProviderMetadata | undefined,
@@ -628,10 +625,9 @@ interface StructuredAnthropicArgs extends StructuredOutputOptions<AnthropicBaseP
 const STRUCTURED_TOOL_NAME = 'submit_output';
 
 /**
- * anthropic has no native json mode, so we coerce structured output via tool
- * prefill: define a single tool whose input schema matches the desired
- * output, force `tool_choice` onto it, and parse the input from the resulting
- * `tool_use` block.
+ * anthropic has no native json mode, so we coerce structured output via tool prefill: define a single tool
+ * whose input schema matches the desired output, force `tool_choice` onto it, and parse the input from the
+ * resulting `tool_use` block.
  */
 const anthropicStructuredOutput = async (args: StructuredAnthropicArgs): Promise<StructuredOutputResult> => {
 	const { system, conversation } = prepareMessages(args.messages);

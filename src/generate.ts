@@ -27,8 +27,7 @@ export interface GenerateResult {
 /**
  * run an agentic chat turn and return everything when it finishes.
  *
- * for streaming UIs use {@link chat} instead — this drains the stream into
- * a single result object.
+ * for streaming UIs use {@link chat} instead — this drains the stream into a single result object.
  *
  * @throws whatever the adapter or any tool throws (re-thrown from `error` chunks).
  */
