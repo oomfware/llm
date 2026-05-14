@@ -323,17 +323,10 @@ const prepareMessages = (messages: ModelMessage[]): PreparedRequest => {
 	const systemBlocks: TextBlockParam[] = [];
 	const conversation: MessageParam[] = [];
 
-	// identify the last assistant message — for prefill, anthropic forbids
-	// trailing whitespace on the final text block of the last assistant turn.
-	let lastAssistantIndex = -1;
-	for (let i = messages.length - 1; i >= 0; i--) {
-		const m = messages[i];
-		if (m && m.role === 'assistant') {
-			lastAssistantIndex = i;
-			break;
-		}
-	}
-	const isPrefill = lastAssistantIndex === messages.length - 1;
+	// when the conversation ends on an assistant turn (prefill), anthropic forbids trailing whitespace on the
+	// final text block — trim only that one.
+	const isPrefill = messages.at(-1)?.role === 'assistant';
+	const lastIndex = messages.length - 1;
 
 	for (let i = 0; i < messages.length; i++) {
 		const m = messages[i];
@@ -350,7 +343,7 @@ const prepareMessages = (messages: ModelMessage[]): PreparedRequest => {
 				break;
 			}
 			case 'assistant': {
-				const trimLastText = isPrefill && i === lastAssistantIndex;
+				const trimLastText = isPrefill && i === lastIndex;
 				conversation.push(toAssistantMessage(m.content, m.providerMetadata, trimLastText));
 				break;
 			}
