@@ -14,7 +14,7 @@ import type { ToolSchema } from './tool.ts';
  *
  * @example
  * ```ts
- * import { jsonSchema, tool } from '@oomfware/ai';
+ * import { jsonSchema, tool } from '@oomfware/llm';
  *
  * const getWeather = tool({
  *   inputSchema: jsonSchema<{ city: string }>({

@@ -1,11 +1,11 @@
 {
-	"name": "@oomfware/ai",
+	"name": "@oomfware/llm",
 	"version": "0.0.0",
-	"description": "small, type-safe, multi-provider AI chat library",
+	"description": "type-safe library for interacting with large language models",
 	"license": "0BSD",
 	"repository": {
 		"type": "git",
-		"url": "https://codeberg.org/oomfware/ai"
+		"url": "https://codeberg.org/oomfware/llm"
 	},
 	"files": [
 		"dist/",

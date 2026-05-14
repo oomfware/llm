@@ -1,9 +1,9 @@
-# @oomfware/ai
+# @oomfware/llm
 
-small, type-safe chat primitives for OpenAI and Anthropic.
+type-safe library for interacting with large language models.
 
 ```sh
-npm install @oomfware/ai
+npm install @oomfware/llm
 ```
 
 the package talks to provider HTTP APIs directly through `fetch()`. no provider SDK is required at
@@ -18,7 +18,7 @@ with libraries such as zod, valibot, and arktype.
 ### choose a provider
 
 ```ts
-import { anthropic, openai } from '@oomfware/ai';
+import { anthropic, openai } from '@oomfware/llm';
 
 const fast = openai('gpt-4o-mini', {
 	apiKey: 'sk-...',
@@ -38,11 +38,11 @@ provider factories do not read ambient configuration. pass `apiKey`, `baseUrl`, 
 ### messages
 
 every message is a discriminated union of role + ordered `content[]`. there is no `content: string`
-shorthand — even simple text messages use a part array. helpers in `@oomfware/ai` keep the common
+shorthand — even simple text messages use a part array. helpers in `@oomfware/llm` keep the common
 case short:
 
 ```ts
-import { assistant, system, text, user } from '@oomfware/ai';
+import { assistant, system, text, user } from '@oomfware/llm';
 
 system('answer in one sentence.');
 // → { role: 'system', content: [{ type: 'text', text: 'answer in one sentence.' }] }
@@ -60,7 +60,7 @@ prefix against the wire bytes, so reordering parts between turns invalidates the
 use `generate()` when you want one resolved result:
 
 ```ts
-import { generate, openai, system, user } from '@oomfware/ai';
+import { generate, openai, system, user } from '@oomfware/llm';
 
 const result = await generate({
 	adapter: openai('gpt-4o-mini'),
@@ -80,7 +80,7 @@ finish reason, and the full conversation as `messages`.
 use `chat()` for streaming interfaces. it returns an async iterable of discriminated chunks.
 
 ```ts
-import { chat, openai, user } from '@oomfware/ai';
+import { chat, openai, user } from '@oomfware/llm';
 
 const stream = chat({
 	adapter: openai('gpt-4o-mini'),
@@ -105,7 +105,7 @@ define tools with `tool()`, then register them by name on a chat call. the regis
 name sent to the model.
 
 ```ts
-import { generate, openai, tool, user } from '@oomfware/ai';
+import { generate, openai, tool, user } from '@oomfware/llm';
 import { z } from 'zod';
 
 const getWeather = tool({
@@ -177,7 +177,7 @@ set `needsApproval: true` for tools that should pause before side effects. the l
 `content[]` as `tool-call` parts.
 
 ```ts
-import { generate, openai, tool, user } from '@oomfware/ai';
+import { generate, openai, tool, user } from '@oomfware/llm';
 import { z } from 'zod';
 
 const sendEmail = tool({
@@ -232,8 +232,8 @@ history in sync, watch for `tool-approval-requested` to know what to prompt for,
 finish reason to decide whether to resume:
 
 ```ts
-import { chat, openai, user } from '@oomfware/ai';
-import type { ModelMessage } from '@oomfware/ai';
+import { chat, openai, user } from '@oomfware/llm';
+import type { ModelMessage } from '@oomfware/llm';
 
 const messages: ModelMessage[] = [user('email alice the meeting notes')];
 
@@ -280,7 +280,7 @@ while (true) {
 against the same adapter.
 
 ```ts
-import { generateObject, openai, user } from '@oomfware/ai';
+import { generateObject, openai, user } from '@oomfware/llm';
 import { z } from 'zod';
 
 const result = await generateObject({
@@ -328,7 +328,7 @@ use `jsonSchema()` when your schema already exists as JSON Schema instead of a S
 library value.
 
 ```ts
-import { jsonSchema, tool } from '@oomfware/ai';
+import { jsonSchema, tool } from '@oomfware/llm';
 
 const schema = jsonSchema<{ city: string }>(
 	{
@@ -367,7 +367,7 @@ provider-specific features without polluting the core types.
 attach `providerMetadata.anthropic.cacheControl` to the part you want to mark as a cache breakpoint:
 
 ```ts
-import { chat, anthropic, user } from '@oomfware/ai';
+import { chat, anthropic, user } from '@oomfware/llm';
 
 chat({
 	adapter: anthropic('claude-sonnet-4-5'),
@@ -412,7 +412,7 @@ the adapter captures them automatically and replays them verbatim on the next tu
 caching still works across resumes:
 
 ```ts
-import { generate, anthropic, user } from '@oomfware/ai';
+import { generate, anthropic, user } from '@oomfware/llm';
 
 const result = await generate({
 	adapter: anthropic('claude-sonnet-4-5'),
@@ -433,7 +433,7 @@ reasoning models return `reasoning` items that must round-trip on resume. the ad
 flows through stateless conversations correctly.
 
 ```ts
-import { generate, openai, user } from '@oomfware/ai';
+import { generate, openai, user } from '@oomfware/llm';
 
 const result = await generate({
 	adapter: openai('gpt-5'),
@@ -459,7 +459,7 @@ import {
 	openai,
 	untilFinishReason,
 	user,
-} from '@oomfware/ai';
+} from '@oomfware/llm';
 
 const stream = chat({
 	adapter: openai('gpt-4o-mini'),
@@ -472,7 +472,7 @@ a custom strategy is a function that receives the current loop state and returns
 should continue.
 
 ```ts
-import type { AgentLoopStrategy } from '@oomfware/ai';
+import type { AgentLoopStrategy } from '@oomfware/llm';
 
 const stayCheap: AgentLoopStrategy = (state) => {
 	return state.totalUsage === undefined || state.totalUsage.outputTokens < 1_000;
@@ -485,7 +485,7 @@ provider options are typed from the selected adapter. model-specific OpenAI opti
 models that support them.
 
 ```ts
-import { chat, openai, user } from '@oomfware/ai';
+import { chat, openai, user } from '@oomfware/llm';
 
 const adapter = openai('gpt-5');
 
@@ -506,7 +506,7 @@ adapters implement streaming chat plus structured output. use `createChatAdapter
 provider.
 
 ```ts
-import { createChatAdapter, type ChatAdapter } from '@oomfware/ai';
+import { createChatAdapter, type ChatAdapter } from '@oomfware/llm';
 
 const local = (model: string): ChatAdapter<string, { numCtx?: number }> => {
 	return createChatAdapter({
@@ -534,7 +534,7 @@ the agent loop accumulates parts in receive order to build the assistant turn's 
 for tests, use `dummy()` to script model turns:
 
 ```ts
-import { dummy } from '@oomfware/ai';
+import { dummy } from '@oomfware/llm';
 
 const adapter = dummy({
 	responses: [

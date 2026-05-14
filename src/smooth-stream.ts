@@ -32,7 +32,7 @@ export interface SmoothStreamOptions {
  *
  * @example
  * ```ts
- * import { chat, openai, smoothStream } from '@oomfware/ai';
+ * import { chat, openai, smoothStream } from '@oomfware/llm';
  *
  * for await (const chunk of smoothStream(chat({ adapter, messages }), { chunking: 'word' })) {
  *   if (chunk.type === 'text-delta') {
