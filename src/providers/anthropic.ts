@@ -275,12 +275,14 @@ async function* streamAnthropic(args: StreamAnthropicArgs): AsyncGenerator<Adapt
 					finishReason = mapFinishReason(event.delta.stop_reason);
 				}
 				if (event.usage) {
-					usage = mergeUsage(usage, {
+					// message_delta only carries output and cache counts; preserve inputTokens from message_start.
+					usage = {
 						inputTokens: usage?.inputTokens ?? 0,
 						outputTokens: event.usage.output_tokens,
-						cacheCreationInputTokens: event.usage.cache_creation_input_tokens ?? undefined,
-						cacheReadInputTokens: event.usage.cache_read_input_tokens ?? undefined,
-					});
+						cacheCreationInputTokens:
+							event.usage.cache_creation_input_tokens ?? usage?.cacheCreationInputTokens,
+						cacheReadInputTokens: event.usage.cache_read_input_tokens ?? usage?.cacheReadInputTokens,
+					};
 				}
 				break;
 			}
@@ -301,18 +303,6 @@ const toUsage = (u: {
 	cacheCreationInputTokens: u.cache_creation_input_tokens ?? undefined,
 	cacheReadInputTokens: u.cache_read_input_tokens ?? undefined,
 });
-
-const mergeUsage = (a: Usage | undefined, b: Usage): Usage => {
-	if (!a) {
-		return b;
-	}
-	return {
-		inputTokens: b.inputTokens ?? a.inputTokens,
-		outputTokens: b.outputTokens ?? a.outputTokens,
-		cacheCreationInputTokens: b.cacheCreationInputTokens ?? a.cacheCreationInputTokens,
-		cacheReadInputTokens: b.cacheReadInputTokens ?? a.cacheReadInputTokens,
-	};
-};
 
 interface PreparedRequest {
 	system: TextBlockParam[] | undefined;
