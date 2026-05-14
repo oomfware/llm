@@ -136,12 +136,15 @@ const targets: Target[] = [
 		file: 'openai-models.ts',
 		typeName: 'OpenAIKnownChatModelId',
 		// same rationale as anthropic: `:variant` slugs aren't native openai ids.
+		// openrouter brands openai's `chat-latest` alias as `gpt-chat-latest` —
+		// strip the prefix back to match the id openai's own api accepts.
 		collect: ({ catalog }) =>
 			dedupeAndSort(
 				catalog
 					.filter((m) => m.id.startsWith('openai/') && !m.id.includes(':') && isLive(m))
 					.map((m) => m.id.slice('openai/'.length))
-					.filter((id) => !/search-preview/.test(id)),
+					.filter((id) => !/search-preview/.test(id))
+					.map((id) => (id === 'gpt-chat-latest' ? 'chat-latest' : id)),
 			),
 	},
 	{
