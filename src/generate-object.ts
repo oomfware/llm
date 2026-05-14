@@ -32,6 +32,20 @@ export interface GenerateObjectOptions<
 	providerOptions?: TAdapter['~types']['providerOptions'];
 }
 
+// deriving a JSON Schema from a Standard Schema can be non-trivial (e.g. zod's toJSONSchema). cache per
+// schema reference so repeat calls against the same schema don't re-derive the wire shape.
+const jsonSchemaCache = new WeakMap<object, Record<string, unknown>>();
+
+const getJsonSchema = (schema: StandardSchemaV1 & StandardJSONSchemaV1): Record<string, unknown> => {
+	const cached = jsonSchemaCache.get(schema);
+	if (cached) {
+		return cached;
+	}
+	const derived = schema['~standard'].jsonSchema.output({ target: 'draft-07' });
+	jsonSchemaCache.set(schema, derived);
+	return derived;
+};
+
 export interface GenerateObjectResult<T> {
 	object: T;
 	/** raw text the structured output was parsed from. */
@@ -64,7 +78,7 @@ export const generateObject = async <
 	const loop = await generate({ ...rest, adapter });
 
 	// step 2: extract JSON Schema and ask the provider for a structured response
-	const jsonSchema = schema['~standard'].jsonSchema.output({ target: 'draft-07' });
+	const jsonSchema = getJsonSchema(schema);
 
 	const result = await adapter.structuredOutput({
 		messages: loop.messages,
