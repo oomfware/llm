@@ -34,14 +34,14 @@
 		"@standard-schema/spec": "^1.1.0"
 	},
 	"devDependencies": {
-		"@anthropic-ai/sdk": "^0.95.2",
-		"@types/node": "^25.7.0",
+		"@anthropic-ai/sdk": "^0.104.2",
+		"@types/node": "^25.9.3",
 		"bumpp": "^11.1.0",
-		"openai": "^6.37.0",
-		"oxfmt": "^0.49.0",
-		"oxlint": "^1.64.0",
-		"oxlint-tsgolint": "^0.22.1",
-		"tsdown": "^0.22.0",
+		"openai": "^6.44.0",
+		"oxfmt": "^0.55.0",
+		"oxlint": "^1.70.0",
+		"oxlint-tsgolint": "^0.23.0",
+		"tsdown": "^0.22.3",
 		"typescript": "^6.0.3",
 		"zod": "^4.4.3"
 	}
