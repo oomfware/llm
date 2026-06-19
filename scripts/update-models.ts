@@ -17,7 +17,7 @@ import { z } from 'zod';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const OUTPUT_DIR = resolve(ROOT, 'src/providers/generated');
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/models';
-const OPENROUTER_RANKED_URL = 'https://openrouter.ai/api/frontend/models/find?order=top-weekly';
+const OPENROUTER_RANKED_URL = 'https://openrouter.ai/api/frontend/v1/models/find?order=top-weekly';
 
 /**
  * cap the openrouter union to the N most-used models. anthropic/openai unions stay full because their slugs
