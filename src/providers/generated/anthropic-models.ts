@@ -4,6 +4,7 @@
 export type AnthropicKnownModelId =
 	| 'claude-3-5-haiku'
 	| 'claude-3-haiku'
+	| 'claude-fable-5'
 	| 'claude-haiku-4-5'
 	| 'claude-opus-4'
 	| 'claude-opus-4-1'
@@ -12,6 +13,8 @@ export type AnthropicKnownModelId =
 	| 'claude-opus-4-6-fast'
 	| 'claude-opus-4-7'
 	| 'claude-opus-4-7-fast'
+	| 'claude-opus-4-8'
+	| 'claude-opus-4-8-fast'
 	| 'claude-sonnet-4'
 	| 'claude-sonnet-4-5'
 	| 'claude-sonnet-4-6';
